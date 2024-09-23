@@ -1,0 +1,50 @@
+.video-player {
+  @apply flex relative flex-col bg-white pb-4;
+  border-radius: 5px;
+  width: 95%;
+  margin: 0 auto;
+  @include shadow;
+
+  .controls-container {
+    @apply flex justify-between items-center;
+
+    .controls {
+      @apply flex gap-3 items-center text-xl;
+      padding: 15px 15px 0 15px;
+
+      .control {
+        cursor: pointer;
+        @include no-select;
+        @apply cursor-pointer text-blue-500;
+        transition: .3s;
+        
+        &:hover {
+          @apply text-blue-700;
+        }
+      }
+
+      .progress-container {
+        @apply relative w-full h-1;
+        cursor: pointer;
+        transition: .3s;
+        border-radius: 10px;
+
+        &:hover {
+          @apply h-3;
+        }
+
+        .progress-bar {
+          @apply bg-gray-300 w-full h-full;
+          border-radius: 10px;
+        }
+
+        .progress-value {
+          @apply absolute bg-blue-400 h-full top-0 left-0;
+          border-radius: 10px;
+          z-index: 999;
+          width: 0%;
+        }
+      }
+    }
+  }
+}

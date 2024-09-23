@@ -1,0 +1,18 @@
+.action-list {
+  @apply flex gap-2 flex-wrap overflow-y-scroll h-52 p-4 items-center justify-center;
+  width: 95%;
+  margin: 15px auto;
+  @include shadow;
+  border-radius: 10px;
+
+  li {
+    @apply bg-gray-200 p-3 h-10 flex items-center cursor-pointer;
+    @include no-select;
+    border-radius: 10px;
+    text-align: center;
+
+    &:hover {
+      @apply bg-gray-300;
+    }
+  }
+}

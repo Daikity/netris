@@ -1,0 +1,26 @@
+@import '../tailwind.css';
+
+@import './_mixins';
+@import './video.scss';
+@import './actions.scss';
+
+$primary-color: #fff;
+
+@font-face {
+  font-family: "FontMa"; 
+  src: url("../fonts/FontMa.ttf") format("truetype"); 
+  font-style: normal; 
+  font-weight: normal; 
+}
+
+* {
+  font-family: 'FontMa', Arial, sans-serif;
+}
+
+body {
+  background-color: $primary-color;
+}
+
+#root {
+  @include layout-fullscreen;
+}
