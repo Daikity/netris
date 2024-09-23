@@ -14,61 +14,42 @@ const App: React.FC = () => {
 
   const dispatch = useDispatch();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const actions = useSelector((state: ActionReducers) => state.actionsReducer.actions);
 
-  const actions = useSelector((state: ActionReducers) => state.actionsReducer.actions)
-  
-  const handleEventClick = (time: number) => {
+  useEffect(() => {
+    dispatch(fetchActions());
+  }, [dispatch]);
+
+  const togglePlayPause = () => {
     if (videoRef.current) {
-      videoRef.current.currentTime = time;
-      setCurrentTime(time);
+      isPlay ? videoRef.current.pause() : videoRef.current.play();
+      setIsPlay(!isPlay);
     }
-  }
+  };
 
-  const activeActions = actions.filter(
-    action => currentTime >= action.timestamp - 0.01 && currentTime <= action.timestamp + action.duration
-  )
-
-  const handleVideoClick = () => {
+  const updateTime = () => {
     if (videoRef.current) {
-      if (videoRef.current.paused) {
-        videoRef.current.play();
-        setIsPlay(true);
-      } else {
-        videoRef.current.pause();
-        setIsPlay(false);
-      }
+      setCurrentTime(videoRef.current.currentTime);
     }
-  }
-
-  const handleTimeUpdate = () => {
-    if (videoRef.current) {
-      setCurrentTime(videoRef.current.currentTime)
-    }
-  }
-
-  const addTime = () => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = currentTime + 30;
-      setCurrentTime(currentTime + 30);
-    }
-  }
-
-  const handleDurationUpdate = () => {
-    if (videoRef.current) {
-      setDuration(videoRef.current.duration);
-    }
-  }
+  };
 
   const handleSeek = (time: number) => {
     if (videoRef.current) {
       videoRef.current.currentTime = time;
       setCurrentTime(time);
     }
-  }
+  };
 
-  useEffect(() => {
-    dispatch(fetchActions())
-  }, [dispatch])
+  const addTime = (increment: number) => {
+    if (videoRef.current) {
+      const newTime = Math.min(currentTime + increment, duration);
+      handleSeek(newTime);
+    }
+  };
+
+  const activeActions = actions.filter(
+    action => currentTime >= action.timestamp - 0.01 && currentTime <= action.timestamp + action.duration
+  );
 
   return (
     <>
@@ -76,16 +57,16 @@ const App: React.FC = () => {
         <video
           ref={videoRef}
           src={constants.VIDEO_URL}
-          onClick={handleVideoClick}
-          onTimeUpdate={handleTimeUpdate}
-          onDurationChange={handleDurationUpdate}
+          onClick={togglePlayPause}
+          onTimeUpdate={updateTime}
+          onDurationChange={() => setDuration(videoRef.current?.duration || 0)}
         />
         <div className="controls-container">
           <div className='controls'>
-            <PlayPause isPlay={isPlay} onStartStopVideo={handleVideoClick} />
-            <AddTime updateTime={addTime} />
+            <PlayPause isPlay={isPlay} onStartStopVideo={togglePlayPause} />
+            <AddTime updateTime={() => addTime(30)} />
           </div>
-          <div className="controls" style={{width: '100%', padding: '15px 15px 0 15px'}}>
+          <div className="controls" style={{ width: '100%', padding: '15px 15px 0 15px' }}>
             <ProgressBar 
               duration={duration} 
               currentTime={currentTime} 
@@ -96,7 +77,7 @@ const App: React.FC = () => {
         <RectangleOverlay positioning={activeActions.map(event => event.zone)} />
       </div>
       <div>
-        <ActionsList actions={actions} onEventClick={handleEventClick} />
+        <ActionsList actions={actions} onEventClick={handleSeek} />
       </div>
     </>
   );
